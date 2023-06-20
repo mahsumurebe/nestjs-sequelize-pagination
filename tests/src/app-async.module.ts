@@ -2,21 +2,22 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ItemsModule } from './items/items.module';
 import { PaginationModule } from '../../lib';
+import * as SQLite from 'sqlite3';
 
 @Module({
   imports: [
     SequelizeModule.forRoot({
-      database: 'postgres',
-      dialect: 'postgres',
       logging: false,
-      username: 'root',
-      password: 'root',
-      host: 'localhost',
-      port: 5432,
       synchronize: true,
       autoLoadModels: true,
       retryAttempts: 2,
       retryDelay: 1000,
+      dialect: 'sqlite',
+      storage: 'tests/db.sqlite',
+      dialectOptions: {
+        mode:
+          SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE | SQLite.OPEN_FULLMUTEX,
+      },
     }),
     ItemsModule,
     PaginationModule.forRootAsync({
