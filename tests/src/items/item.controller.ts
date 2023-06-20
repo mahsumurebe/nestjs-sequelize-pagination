@@ -8,9 +8,7 @@ export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
   @Get('/')
-  findAll(
-    @PaginateQuery() paginateQuery: PaginationOptions,
-  ): Promise<ItemEntity[]> {
+  findAll(@PaginateQuery() paginateQuery: PaginationOptions) {
     return this.itemService.findAll(paginateQuery);
   }
 

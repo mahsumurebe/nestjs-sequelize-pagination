@@ -1,8 +1,11 @@
 import { MetaInterface } from '../interfaces';
-import { ModelStatic } from 'sequelize/types';
+import { Model } from 'sequelize-typescript';
 
-export class PaginatedData<T = ModelStatic<any>> {
-  constructor(public readonly meta: MetaInterface, public readonly items: T) {}
+export class PaginatedData<M extends Model> {
+  constructor(
+    public readonly meta: MetaInterface,
+    public readonly items: M[],
+  ) {}
 
   toJSON() {
     return {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ItemEntity } from './item.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { PaginationOptions, PaginationService } from '../../../lib';
+import { FindAndCountOptions } from 'sequelize';
 
 @Injectable()
 export class ItemService {
@@ -11,10 +12,14 @@ export class ItemService {
     private readonly itemRepository: typeof ItemEntity,
   ) {}
 
-  async findAll(options: PaginationOptions): Promise<ItemEntity[]> {
-    return await this.paginationService.findAllPaginate(
+  findAll(
+    options: PaginationOptions,
+    optionsSequelize: FindAndCountOptions<ItemEntity> = {},
+  ) {
+    return this.paginationService.findAllPaginate(
       this.itemRepository,
       options,
+      optionsSequelize,
     );
   }
 

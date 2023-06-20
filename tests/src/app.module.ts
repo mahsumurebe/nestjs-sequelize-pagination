@@ -24,7 +24,7 @@ import * as SQLite from 'sqlite3';
       isGlobal: true,
       offset: 50,
       page: 1,
-      details: 'complete',
+      details: true,
       url: 'http://localhost:3001/',
     }),
   ],

@@ -26,7 +26,7 @@ import * as SQLite from 'sqlite3';
       useFactory: () => ({
         offset: 50,
         page: 1,
-        details: 'complete',
+        details: true,
         url: 'http://localhost:3001/',
       }),
     }),
