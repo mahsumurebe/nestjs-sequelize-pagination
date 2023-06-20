@@ -6,7 +6,7 @@ import {
   PaginationOptions,
 } from './interfaces';
 import { FindAndCountOptions } from 'sequelize';
-import { Model, ModelStatic, Sequelize } from 'sequelize-typescript';
+import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { PaginatedData } from './common';
 import { ModelDoesNotRegisteredException } from './exceptions';
 
@@ -19,7 +19,7 @@ export class PaginationService {
   ) {}
 
   async findAllPaginate<M extends Model>(
-    model: ModelStatic<M>,
+    model: ModelCtor<M>,
     options: Partial<PaginationOptions>,
     optionsSequelize: FindAndCountOptions<M> = {},
   ): Promise<PaginatedData<M>> {
@@ -44,9 +44,7 @@ export class PaginationService {
     const start = end - mergedOptions.offset;
     const itemCount = mergedOptions.offset;
 
-    const modelEntity = this.sequelize.models[modelName];
-
-    const data = await modelEntity.findAndCountAll({
+    const data = await model.findAndCountAll({
       ...optionsSequelize,
       limit: itemCount,
       offset: start,
