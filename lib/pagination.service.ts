@@ -8,6 +8,7 @@ import {
 import { FindAndCountOptions } from 'sequelize';
 import { Model, ModelStatic, Sequelize } from 'sequelize-typescript';
 import { PaginatedData } from './common';
+import { ModelDoesNotRegisteredException } from './exceptions';
 
 @Injectable()
 export class PaginationService {
@@ -25,7 +26,7 @@ export class PaginationService {
     const modelName = model.name;
 
     if (!(modelName in this.sequelize.models)) {
-      throw new Error('test');
+      throw new ModelDoesNotRegisteredException(modelName);
     }
 
     const mergedOptions: PaginationOptions = Object.assign(

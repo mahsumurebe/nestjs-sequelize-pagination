@@ -2,8 +2,9 @@ import { createParamDecorator } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { PaginationOptions } from '../interfaces';
 import { Request } from 'express';
+import { OnlyHttpContextException } from '../exceptions';
 
-export const PaginateQuery = createParamDecorator(
+export const PaginationQuery = createParamDecorator(
   (data: any, context: ExecutionContextHost) => {
     if (context.getType() === 'http') {
       const host = context.switchToHttp();
@@ -22,6 +23,6 @@ export const PaginateQuery = createParamDecorator(
       }
       return payload;
     }
-    throw new Error('Only http support');
+    throw new OnlyHttpContextException();
   },
 );

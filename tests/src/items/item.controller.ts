@@ -1,14 +1,14 @@
 import { Controller, Get, Post } from '@nestjs/common';
 import { ItemEntity } from './item.entity';
 import { ItemService } from './item.service';
-import { PaginateQuery, PaginationOptions } from '../../../lib';
+import { PaginationOptions, PaginationQuery } from '../../../lib';
 
 @Controller('item')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
   @Get('/')
-  findAll(@PaginateQuery() paginateQuery: PaginationOptions) {
+  findAll(@PaginationQuery() paginateQuery: PaginationOptions) {
     return this.itemService.findAll(paginateQuery);
   }
 
