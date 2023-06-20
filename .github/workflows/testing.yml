@@ -3,7 +3,7 @@ name: Test Module
 on:
   pull_request:
     branches:
-      - main
+      - master
     types: [ opened, reopened, ready_for_review ]
   workflow_call:
 
