@@ -5,8 +5,8 @@ import {
   PaginationModuleOptions,
   PaginationOptions,
 } from './interfaces';
-import { FindAndCountOptions } from 'sequelize';
-import { Model, ModelType, Sequelize } from 'sequelize-typescript';
+import { FindAndCountOptions, ModelStatic } from 'sequelize';
+import { Model, Sequelize } from 'sequelize-typescript';
 import { PaginatedData } from './common';
 import { ModelDoesNotRegisteredException } from './exceptions';
 
@@ -18,12 +18,8 @@ export class PaginationService {
     private readonly sequelize: Sequelize,
   ) {}
 
-  async findAllPaginate<
-    A extends object,
-    B extends object,
-    M extends Model<A, B>,
-  >(
-    model: ModelType<A, B>,
+  async findAllPaginate<M extends Model>(
+    model: ModelStatic<M>,
     options: Partial<PaginationOptions>,
     optionsSequelize: FindAndCountOptions<M> = {},
   ): Promise<PaginatedData<M>> {
