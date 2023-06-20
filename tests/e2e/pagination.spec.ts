@@ -56,32 +56,32 @@ describe('Pagination', () => {
           if (body.meta.totalItems !== 100) {
             throw new Error('Meta: totalItems must be null');
           }
-          if (body.meta.totalPages !== 2) {
-            throw new Error('Meta: totalPages must be 2');
+          if (body.meta.pageCount !== 2) {
+            throw new Error('Meta: pageCount must be 2');
           }
           if (body.meta.itemCount !== 50) {
             throw new Error('Meta: itemCount must be 50');
           }
           if ('links' in body.meta) {
             if (
-              body.meta.links.firstUrl !==
+              body.meta.links.first !==
               'http://localhost:3001/item?page=1&offset=50'
             ) {
               throw new Error('Meta: links.firstUrl is invalid');
             }
             if (
-              body.meta.links.lastUrl !==
+              body.meta.links.last !==
               'http://localhost:3001/item?page=2&offset=50'
             ) {
               throw new Error('Meta: links.lastUrl is invalid');
             }
             if (
-              body.meta.links.nextUrl !==
+              body.meta.links.next !==
               'http://localhost:3001/item?page=2&offset=50'
             ) {
               throw new Error('Meta: links.nextUrl is invalid');
             }
-            if (body.meta.links.prevUrl !== null) {
+            if (body.meta.links.previous !== null) {
               throw new Error('Meta: links.prevUrl is invalid');
             }
           } else {
