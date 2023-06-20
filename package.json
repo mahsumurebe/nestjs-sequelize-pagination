@@ -9,7 +9,6 @@
     "format": "prettier --write \"**/*.ts\"",
     "lint": "eslint 'lib/**/*.ts' --fix",
     "prepublish": "npm run build",
-    "publish": "npm publish --access public",
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch",
     "prerelease": "npm run build",
