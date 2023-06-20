@@ -10,7 +10,7 @@ import { createPaginationAsyncOptions } from './common';
 @Module({})
 export class PaginationCoreModule {
   static forRoot(options: PaginationModuleOptions = {}): DynamicModule {
-    const paginationModuleOptions: Provider = {
+    const paginationModuleOptions: Provider<PaginationModuleOptions> = {
       provide: PAGINATION_MODULE_OPTIONS,
       useValue: options,
     };
