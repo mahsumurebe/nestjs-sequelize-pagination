@@ -11,7 +11,7 @@ import { PaginationModule } from '../../lib';
       logging: false,
       username: 'root',
       password: 'root',
-      host: '0.0.0.0',
+      host: 'localhost',
       port: 5432,
       synchronize: true,
       autoLoadModels: true,

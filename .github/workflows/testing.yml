@@ -23,8 +23,9 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
-          POSTGRES_USER: root
           POSTGRES_PASSWORD: root
+          POSTGRES_USER: root
+          POSTGRES_DB: postgres
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -39,4 +40,4 @@ jobs:
       - name: Install dependencies
         run: npm i
       - name: Test
-        run: test:e2e
+        run: npm run test:e2e
