@@ -1,6 +1,6 @@
 {
   "name": "nestjs-sequelize-pagination",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Pagination helper method for Sequelize models.",
   "main": "index.js",
   "types": "index.d.ts",
