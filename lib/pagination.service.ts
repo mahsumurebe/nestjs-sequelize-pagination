@@ -2,125 +2,127 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PAGINATION_MODULE_OPTIONS } from './pagination.constants';
 import {
   MetaInterface,
+  MetaLinksInterface,
   PaginationModuleOptions,
   PaginationOptions,
 } from './interfaces';
 import { FindAndCountOptions, ModelStatic } from 'sequelize';
 import { Model, Sequelize } from 'sequelize-typescript';
-import { PaginatedData } from './common';
+import { PaginatedData, PaginatedDataAbstract } from './common';
 import { ModelDoesNotRegisteredException } from './exceptions';
 
 @Injectable()
 export class PaginationService {
   constructor(
     @Inject(PAGINATION_MODULE_OPTIONS)
-    private options: PaginationModuleOptions,
+    private readonly options: PaginationModuleOptions,
     private readonly sequelize: Sequelize,
   ) {}
 
   async findAllPaginate<M extends Model>(
     model: ModelStatic<M>,
-    options: Partial<PaginationOptions>,
+    options: Partial<PaginationOptions<M>> = {},
     optionsSequelize: FindAndCountOptions<M> = {},
-  ): Promise<PaginatedData<M>> {
+  ): Promise<PaginatedDataAbstract<M>> {
     const modelName = model.name;
 
-    if (!(modelName in this.sequelize.models)) {
+    if (!this.sequelize.models[modelName]) {
       throw new ModelDoesNotRegisteredException(modelName);
     }
 
-    const mergedOptions: PaginationOptions = Object.assign(
-      {
-        path: null,
-        details: true,
-        offset: 50,
-        page: 1,
-      },
-      this.options,
-      options,
-    );
+    const mergedOptions: PaginationOptions<M> = {
+      path: null,
+      withDetails: true,
+      limit: 50,
+      page: 1,
+      cls: PaginatedData<M>,
+      ...this.options,
+      ...options,
+    };
 
-    const end = mergedOptions.page * mergedOptions.offset;
-    const start = end - mergedOptions.offset;
-    const itemCount = mergedOptions.offset;
+    const { page, limit, url, path, withDetails } = mergedOptions;
+    const offset = (page - 1) * limit;
 
     const data = await model.findAndCountAll({
       ...optionsSequelize,
-      limit: itemCount,
-      offset: start,
+      limit,
+      offset,
     });
 
     const totalItemCount = data.count;
     const totalPages =
-      totalItemCount > 0 ? Math.ceil(totalItemCount / itemCount) : 0;
-
-    let aux = mergedOptions.page + 1;
-    const nextPageNumber = aux <= totalPages ? aux : null;
-    aux = mergedOptions.page - 1;
-    const prevPageNumber = aux >= 1 ? aux : null;
-
-    let url: URL | null = null;
-    let nextPageUrl: URL | null = null;
-    let prevPageUrl: URL | null = null;
-
-    if (mergedOptions.url) {
-      url = new URL(mergedOptions.url);
-      if (mergedOptions.path) {
-        url.pathname =
-          url.pathname.replace(/\/+$/g, '') +
-          '/' +
-          mergedOptions.path.replace(/^\/+/g, '');
-      }
-
-      url.searchParams.set('page', mergedOptions.page.toString());
-      url.searchParams.set('offset', mergedOptions.offset.toString());
-
-      if (nextPageNumber) {
-        nextPageUrl = new URL(url.toString());
-        nextPageUrl.searchParams.set('page', nextPageNumber.toString());
-      }
-
-      if (prevPageNumber) {
-        prevPageUrl = new URL(url.toString());
-        prevPageUrl.searchParams.set('page', prevPageNumber.toString());
-      }
-    }
+      totalItemCount > 0 ? Math.ceil(totalItemCount / limit) : 0;
+    const nextPageNumber = page < totalPages ? page + 1 : null;
+    const prevPageNumber = page > 1 ? page - 1 : null;
 
     let meta: MetaInterface = {
       pageCount: totalPages,
-      page: mergedOptions.page,
+      page,
       nextPage: nextPageNumber,
       prevPage: prevPageNumber,
     };
 
-    if (mergedOptions.details) {
+    if (withDetails) {
+      const links = url
+        ? this.createMetaLinks(
+            url,
+            path,
+            page,
+            limit,
+            totalPages,
+            nextPageNumber,
+            prevPageNumber,
+          )
+        : undefined;
       meta = {
         ...meta,
-        offset: mergedOptions.offset,
+        limit,
         totalItems: totalItemCount,
         itemCount: data.rows.length,
+        links,
       };
-      if (url) {
-        const firstUrl = new URL(url.toString());
-        firstUrl.searchParams.set('page', '1');
-        let lastUrl = firstUrl;
-        if (totalPages > 0) {
-          lastUrl = new URL(url.toString());
-          lastUrl.searchParams.set('page', totalPages.toString());
-        }
-        meta = {
-          ...meta,
-          links: {
-            self: url,
-            first: firstUrl,
-            last: lastUrl,
-            next: nextPageUrl,
-            previous: prevPageUrl,
-          },
-        };
-      }
     }
 
-    return new PaginatedData<M>(meta, data.rows as M[]);
+    return new mergedOptions.cls!(meta, data.rows);
+  }
+
+  private createMetaLinks(
+    baseUrl: string,
+    path: string | null | undefined,
+    page: number,
+    limit: number,
+    totalPages: number,
+    nextPageNumber: number | null,
+    prevPageNumber: number | null,
+  ): MetaLinksInterface {
+    const selfUrl = new URL(baseUrl);
+
+    if (path) {
+      selfUrl.pathname = `${selfUrl.pathname.replace(/\/+$/g, '')}/${path.replace(/^\/+/g, '')}`;
+    }
+
+    const createPageUrl = (pageNumber: number): URL => {
+      const pageUrl = new URL(selfUrl.toString());
+      pageUrl.searchParams.set('page', pageNumber.toString());
+      pageUrl.searchParams.set('limit', limit.toString());
+      return pageUrl;
+    };
+
+    selfUrl.searchParams.set('page', page.toString());
+    selfUrl.searchParams.set('limit', limit.toString());
+
+    const nextPageUrl = nextPageNumber ? createPageUrl(nextPageNumber) : null;
+    const prevPageUrl = prevPageNumber ? createPageUrl(prevPageNumber) : null;
+    const firstPageUrl = createPageUrl(1);
+    const lastPageUrl =
+      totalPages > 0 ? createPageUrl(totalPages) : firstPageUrl;
+
+    return {
+      self: selfUrl,
+      first: firstPageUrl,
+      last: lastPageUrl,
+      next: nextPageUrl,
+      previous: prevPageUrl,
+    };
   }
 }
