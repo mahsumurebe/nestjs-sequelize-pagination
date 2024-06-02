@@ -14,4 +14,4 @@ export const createPaginationAsyncOptions = (
     useFactory: options.useFactory,
     useClass: options.useClass,
     inject: options.inject,
-  } as Provider<PaginationModuleOptions>);
+  }) as Provider<PaginationModuleOptions>;

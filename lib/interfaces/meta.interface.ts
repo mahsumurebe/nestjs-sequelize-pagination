@@ -11,7 +11,7 @@ export interface MetaInterface {
   pageCount: number;
   nextPage: number | null;
   prevPage: number | null;
-  offset?: number;
+  limit?: number;
   totalItems?: number;
   itemCount?: number;
   links?: MetaLinksInterface;
