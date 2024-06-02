@@ -58,9 +58,9 @@ import * as SQLite from 'sqlite3';
     ItemsModule,
     PaginationModule.forRoot({
       isGlobal: true,
-      offset: 50,
+      limit: 50,
       page: 1,
-      details: true,
+      withDetails: true,
       url: 'http://localhost:3001/',
     }),
   ],
@@ -72,13 +72,14 @@ export class AppModule {
 The **forRoot()** method supports all the configuration properties exposed by the pagination constuctor . In addition,
 there are several extra configuration properties described below.
 
-| Name     | Description                                                | Type                      | Default     |
-|----------|------------------------------------------------------------|---------------------------|-------------|
-| url      | If you want a global url                                   | _string_                  | `null`      |
-| isGlobal | If you want the module globally                            | _boolean_                 | `false`     |
-| page     | It is used by default when page information is not sent.   | _number_                  | `1`         |
-| offset   | It is used by default when offset information is not sent. | _number_                  | `50`        |
-| details  | Used to detail meta information                            | 'necessary' \| 'complete' | `necessary` |
+| Name        | Description                                                                                              | Type                      | Default         |
+|-------------|----------------------------------------------------------------------------------------------------------|---------------------------|-----------------|
+| url         | If you want a global url                                                                                 | _string_                  | `null`          |
+| isGlobal    | If you want the module globally                                                                          | _boolean_                 | `false`         |
+| page        | It is used by default when page information is not sent.                                                 | _number_                  | `1`             |
+| limit       | It is used by default when limit information is not sent.                                                | _number_                  | `50`            |
+| withDetails | Used to detail meta information                                                                          | 'necessary' \| 'complete' | `necessary`     |
+| cls         | Paginated Data class to be used in function output. The class must be extended to PaginatedDataAbstract. | PaginatedDataAbstract     | `PaginatedData` |
 
 ### Service
 
@@ -153,7 +154,7 @@ export class ItemsModule {
 
 ### Decorator
 
-PaginationQuery decorator extracts the page and offset value from the querystring. This decorator can only be used in
+PaginationQuery decorator extracts the page and limit value from the querystring. This decorator can only be used in
 the http context.
 
 ```ts
@@ -162,7 +163,7 @@ import { PaginationOptions } from "nestjs-sequelize-pagination";
 const paginateQuery: PaginationOptions = {
   path: '/item',
   page: 2, // http://localhost:3000/item?page=2
-  offset: 10, // http://localhost:3000/item?page=2&offset=10
+  limit: 10, // http://localhost:3000/item?page=2&limit=10
 }
 ```
 
