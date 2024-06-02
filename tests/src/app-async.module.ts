@@ -24,9 +24,9 @@ import * as SQLite from 'sqlite3';
       imports: [SequelizeModule],
       isGlobal: true,
       useFactory: () => ({
-        offset: 50,
+        limit: 50,
         page: 1,
-        details: true,
+        withDetails: true,
         url: 'http://localhost:3001/',
       }),
     }),

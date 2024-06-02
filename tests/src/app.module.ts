@@ -22,9 +22,9 @@ import * as SQLite from 'sqlite3';
     ItemsModule,
     PaginationModule.forRoot({
       isGlobal: true,
-      offset: 50,
+      limit: 50,
       page: 1,
-      details: true,
+      withDetails: true,
       url: 'http://localhost:3001/',
     }),
   ],

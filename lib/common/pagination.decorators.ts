@@ -15,7 +15,7 @@ export const PaginationQuery = createParamDecorator(
       };
       if (req.query) {
         if ('offset' in req.query) {
-          payload['offset'] = parseInt(req.query.offset as string);
+          payload['limit'] = parseInt(req.query.offset as string);
         }
         if ('page' in req.query) {
           payload['page'] = parseInt(req.query.page as string);

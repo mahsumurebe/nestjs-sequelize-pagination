@@ -1,8 +1,8 @@
-import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { PaginationOptions } from './pagination-options.interface';
+import type { ModuleMetadata } from '@nestjs/common';
+import type { PaginationOptions } from './pagination-options.interface';
 
 export interface PaginationModuleOptions
-  extends Partial<Omit<PaginationOptions, 'path'>> {
+  extends Partial<Omit<PaginationOptions<any>, 'path'>> {
   isGlobal?: boolean;
 }
 

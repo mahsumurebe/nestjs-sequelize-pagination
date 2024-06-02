@@ -13,7 +13,7 @@ export class ItemService {
   ) {}
 
   findAll(
-    options: PaginationOptions,
+    options: PaginationOptions<ItemEntity>,
     optionsSequelize: FindAndCountOptions<ItemEntity> = {},
   ) {
     return this.paginationService.findAllPaginate(
