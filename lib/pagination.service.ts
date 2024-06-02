@@ -8,7 +8,7 @@ import {
 } from './interfaces';
 import { FindAndCountOptions, ModelStatic } from 'sequelize';
 import { Model, Sequelize } from 'sequelize-typescript';
-import { PaginatedData, PaginatedDataAbstract } from './common';
+import { mergeDeep, PaginatedData, PaginatedDataAbstract } from './common';
 import { ModelDoesNotRegisteredException } from './exceptions';
 
 @Injectable()
@@ -30,15 +30,17 @@ export class PaginationService {
       throw new ModelDoesNotRegisteredException(modelName);
     }
 
-    const mergedOptions: PaginationOptions<M> = {
-      path: null,
-      withDetails: true,
-      limit: 50,
-      page: 1,
-      cls: PaginatedData<M>,
-      ...this.options,
-      ...options,
-    };
+    const mergedOptions: PaginationOptions<M> = mergeDeep<PaginationOptions<M>>(
+      {
+        path: null,
+        withDetails: true,
+        limit: 50,
+        page: 1,
+        cls: PaginatedData,
+      },
+      this.options,
+      options,
+    );
 
     const { page, limit, url, path, withDetails } = mergedOptions;
     const offset = (page - 1) * limit;
